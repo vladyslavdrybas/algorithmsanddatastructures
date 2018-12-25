@@ -1,9 +1,9 @@
 ###> symfony/framework-bundle ###
-/app/.env.local
-/app/.env.*.local
-/app/public/bundles/
-/app/var/
-/app/vendor/
+/api/.env.local
+/api/.env.*.local
+/api/public/bundles/
+/api/var/
+/api/vendor/
 /.env
 /.idea
 ###< symfony/framework-bundle ###

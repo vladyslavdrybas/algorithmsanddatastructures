@@ -6,4 +6,6 @@
 /api/vendor/
 /.env
 /.idea
+/data
+/var
 ###< symfony/framework-bundle ###

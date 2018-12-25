@@ -8,4 +8,5 @@
 /.idea
 /data
 /var
+*.cache
 ###< symfony/framework-bundle ###

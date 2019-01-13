@@ -35,9 +35,12 @@ class ExceptionSubscriber implements EventSubscriberInterface
         $classImplements = class_implements($class);
 
         if (\in_array(HttpExceptionInterface::class, $classImplements, true)) {
+            /**
+             * @var HttpExceptionInterface $e
+             */
             $code = $e->getStatusCode();
         } else {
-            $code = JsonResponse::HTTP_BAD_REQUEST;
+            $code = JsonResponse::HTTP_FORBIDDEN;
         }
 
         $responseAnswer = [
@@ -45,7 +48,7 @@ class ExceptionSubscriber implements EventSubscriberInterface
             'code' => $code,
         ];
 
-        if ('dev' === $this->params->get('environment')) {
+        if ('prod' !== $this->params->get('environment')) {
             $responseAnswer['exception'] = [
                 'class' => $class,
                 'implements' => $classImplements,

@@ -1,3 +1,5 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+lectures:
+    path: /p/{p_id}/l/{l_id}
+    controller: App\Controller\ParagraphController::lecture
+    methods: [GET]
+    schemes: '%project_schemes%'

@@ -248,6 +248,125 @@ function isSubsequence(needle, where)
     return hasBeenFound;
 }
 
+function maxSubarraySum(arr, length)
+{
+    if (arr.length < length) {
+        return null;
+    }
+
+    let sequenceSum = 0;
+
+    for (let i = 0; i < length; i++) {
+        sequenceSum += arr[i];
+    }
+
+    let tempSum = sequenceSum;
+
+    for (let i = length; i < arr.length; i++) {
+        tempSum = tempSum - arr[i - length] + arr[i];
+        if (sequenceSum < tempSum) {
+            sequenceSum = tempSum;
+        }
+    }
+
+    return sequenceSum;
+}
+
+function minSubArrayLen(arr, needle)
+{
+    // find a min subarray len where subarray sum bigger or equal to the needle
+    // pendulum principle
+    // start from subarray with length 1 and go to the right
+    // if not found go to the left with subarray length 2 and so on
+    // right->left->right->left->right...
+    let i = 1;
+    let j = i;
+    let sum = arr[0];
+    let direction = 1;
+    let counter = 0;
+    do {
+        counter++;
+
+        if (needle <= sum) {
+            console.log({
+                'i':i,
+                'j':j,
+                'sum':sum,
+                'direction':direction,
+                'counter': counter
+            });
+            return i;
+        }
+
+        if (direction === 1) {
+            sum = sum + arr[j] - (arr[j-i] || 0);
+            j++;
+        } else {
+            sum = sum + arr[j] - (arr[j+i] || 0);
+            j--;
+        }
+
+        if (j === arr.length) {
+            i++;
+            direction = 0;
+            j = j - i;
+        }
+
+        if (j === -1) {
+            i++;
+            direction = 1;
+            j = j + i;
+        }
+    } while (i <= arr.length);
+
+    console.log({
+        'i':i,
+        'j':j,
+        'sum':sum,
+        'direction':direction,
+        'counter': counter
+    });
+    return 0;
+}
+
+function findLongestSubstring(str)
+{
+    /**
+     * find longest sequence of unique chars
+     * follow from the left to the right. calculate current string length,
+     * save current char index into an array.
+     * if the character already exists -> start counting unique subsequence
+     * directly behind the previous entry of the current symbol.
+     */
+
+    if (str.length === 0) {
+        return 0;
+    }
+
+    let charLastIndex = {};
+    let currentLength = 0;
+    let maxLength = 0;
+    let stringStartFrom = 0;
+    let i = 0;
+
+    do {
+        if (charLastIndex.hasOwnProperty(str[i])) {
+            if (stringStartFrom < charLastIndex[str[i]] + 1) {
+                stringStartFrom = charLastIndex[str[i]] + 1;
+            }
+        }
+        charLastIndex[str[i]] = i;
+
+        currentLength = i - stringStartFrom + 1;
+        if (maxLength < currentLength) {
+            maxLength = currentLength;
+        }
+        i++;
+    } while(i < str.length);
+
+    return maxLength;
+}
+
 function getRandomInt(min, max)
 {
     min = Math.ceil(min);
@@ -259,7 +378,7 @@ function getRandomIntArray(size)
 {
     let arr = [];
     for (let i = 0; i < size ; i++) {
-        arr[i] = getRandomInt(0, 10000);
+        arr[i] = getRandomInt(0, 1);
     }
     return arr;
 }
@@ -285,5 +404,14 @@ function getRandomIntArray(size)
 // r = isSubsequence('hello', 'hessdgslsgrerglergerg4o world');
 // console.log(r);
 
-r = isSubsequence('hello', 'hsdfselssgelo world');
+// r = isSubsequence('hello', 'hsdfselssgelo world');
+// console.log(r);
+
+// r = maxSubarraySum([1, 4, 2, 10, 23, 3, 1, 0, 20], 4);
+// console.log(r);
+
+// r = minSubArrayLen(arr = getRandomIntArray(1000), 95);
+// console.log(r);
+
+r = findLongestSubstring('thisishowwedoit');
 console.log(r);

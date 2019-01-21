@@ -1,0 +1,10 @@
+FROM nginx:1.15.5-alpine
+
+RUN adduser -D -u 1000 www-data
+
+ADD config /etc/supervisord.conf
+
+WORKDIR /var/www
+
+RUN mkdir ssl
+RUN mkdir api

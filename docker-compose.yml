@@ -1,0 +1,73 @@
+version: '3.3'
+#If you want your containers to join a pre-existing network, use the external option
+networks:
+    default:
+        external:
+            name: ${PROXY_NETWORK_DEFAULT}
+services:
+    proxy:
+        container_name: ${PROJECT_ALIAS}.${PROXY_SERVICE_NAME}
+        restart: on-failure
+        build:
+            context: ${PROXY_DOCKER_CONTEXT_FOLDER}/${PROJECT_EVIRONMENT}
+            dockerfile: Dockerfile-proxy
+        networks:
+            - default
+        ports:
+            - ${PROXY_DEFAULT_PORT}:80
+            - ${PROXY_SSL_PORT}:443
+        volumes:
+            - ./${PROXY_LOG_FOLDER}:/var/log/nginx
+            - ./${BACKEND_FOLDER}/public:/var/www/public
+            - ./${PROXY_DOCKER_CONTEXT_FOLDER}/${PROJECT_EVIRONMENT}/config/ssl:/var/www/ssl
+            - ./${PROXY_DOCKER_CONTEXT_FOLDER}/${PROJECT_EVIRONMENT}/config:/etc/nginx
+        depends_on:
+            - php
+        external_links:
+            - "php:php"
+
+    db:
+        container_name: ${PROJECT_ALIAS}.${DB_SERVICE_NAME}
+        restart: on-failure
+        image: ${DB_IMAGE}
+        ports:
+            - ${DB_HOST_PORT}:${DB_PORT}
+        environment:
+            POSTGRES_DB: ${DB_NAME}
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_USER_PASSWORD}
+        volumes:
+            - ./${DATA_FOLDER}/${DB_SERVICE_NAME}:/var/lib/postgresql/data
+
+    cache:
+        container_name: ${PROJECT_ALIAS}.${CACHE_SERVICE_NAME}
+        restart: on-failure
+        image: ${CACHE_IMAGE}
+        command: ["redis-server", "--appendonly", "yes"]
+        hostname: ${CACHE_SERVICE_HOST_NAME}
+        networks:
+            - default
+        ports:
+            - ${CACHE_HOST_PORT}:${CACHE_PORT}
+        volumes:
+            - ./${DATA_FOLDER}/${CACHE_SERVICE_NAME}:/data
+
+    php:
+        container_name: ${PROJECT_ALIAS}.${BACKEND_SERVICE_NAME}
+        restart: on-failure
+        build:
+            context: ${BACKEND_DOCKER_CONTEXT_FOLDER}
+            dockerfile: Dockerfile-php-fpm
+        hostname: ${BACKEND_SERVICE_HOST_NAME}
+        networks:
+            - default
+        expose:
+            - 9000
+        depends_on:
+            - db
+            - cache
+        links:
+            - db:db
+            - cache:cache
+        volumes:
+            - ./${BACKEND_FOLDER}:/var/www/:rw

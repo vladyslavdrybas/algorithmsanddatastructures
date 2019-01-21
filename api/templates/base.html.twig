@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="{{ locale_default }}">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {% block stylesheets %}{% endblock %}
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+        {% block javascripts %}
+            <script src="{{ asset('js') }}/p{{ paragraphId }}l{{ lectureId }}.js?v={{ "now"|date("mdYHis") }}" ></script>
+        {% endblock %}
+    </body>
+</html>

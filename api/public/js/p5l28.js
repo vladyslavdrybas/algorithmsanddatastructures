@@ -1,4 +1,4 @@
-// anagrams pattern
+    // anagrams pattern
 
 function isAnagramValid(a, b)
 {

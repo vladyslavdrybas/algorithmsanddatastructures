@@ -33,4 +33,4 @@ console.table(collectEvens(arr));
 
 console.log(toString(compareWith));
 
-console.assert( toString(compareWith) === toString(collectEvens(arr)), 'Does not match');
+console.assert( toString(compareWith) !== toString(collectEvens(arr)), 'Does not match');
